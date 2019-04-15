@@ -10,38 +10,33 @@ class App extends Component {
   }
 
   componentDidMount(){
-    setTimeout(() => {
-      this.setState({
-        movies:[
-          {
-            title:"Matris",
-            poster:"https://images-na.ssl-images-amazon.com/images/I/51EG732BV3L.jpg"
-          },
-          {
-            title:"Full Metal Jacket",
-            poster:"https://images-na.ssl-images-amazon.com/images/I/91sTE00%2Bm%2BL._SL1500_.jpg"
-          },
-          {
-            title: "Oldboy",
-            poster:"https://upload.wikimedia.org/wikipedia/en/6/67/Oldboykoreanposter.jpg"
-          },
-          {
-            title: "Star Wars",
-            poster:"https://images-na.ssl-images-amazon.com/images/I/81WjGytz7HL._SY445_.jpg"
-          },
-          {
-            title:"transpostting",
-            poster:"https://m.media-amazon.com/images/M/MV5BMzA5Zjc3ZTMtMmU5YS00YTMwLWI4MWUtYTU0YTVmNjVmODZhXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SY1000_SX675_AL_.jpg"
-          }
-        ]
-      })
-    },5000)
+    this._getMovies();
   }
   _renderMovies = () =>{
-    const movies = this.state.movies.map((movie, index) =>{
-      return <Movie title={movie.title} poster={movie.poster} key={index} />
+    
+    const movies = this.state.movies.map((movie) =>{
+      console.log(movie);
+      return <Movie 
+        title={movie.title_english}
+        poster={movie.small_cover_image}
+        key={movie.id}
+        genres={movie.genres} 
+        synopsis={movie.synopsis}
+      />
     })
     return movies
+  }
+  _getMovies = async() =>{
+     const movies = await this._callApi();
+     this.setState({
+       movies
+     })
+  }
+  _callApi = () =>{
+    return fetch('https://yts.am/api/v2/list_movies.json?sort_by=download_count')
+    .then(potato => potato.json())
+    .then(json => json.data.movies)
+    .catch( err => console.log(err))
   }
   render() {
     return (
